@@ -1,5 +1,6 @@
-conf.json
+config.json
 # Byte-compiled / optimized / DLL files
+.venvs
 __pycache__/
 *.py[codz]
 *$py.class
