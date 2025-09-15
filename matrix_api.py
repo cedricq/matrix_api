@@ -152,17 +152,23 @@ def main():
     parser.add_argument("-i", "--item_id", required=True, type=str, default='SRS-1', help="Folder ID from which items will be exported")
     args = parser.parse_args()
 
+    folder_name = getFolderName(args.folder_id)
+    
+    print("\n### Get Work Item from folder : " + args.folder_id + " " + folder_name + " ....\n")
     raw = getWorkItemsFromFolder(args.folder_id)
     printRaw(raw)
 
+    print("\n### Get raw JSON data from : " + args.folder_id + " ....\n")
     param = {'children':'yes', 'fields':1}
     data_json = getTest('/item/' + args.folder_id, param)
     print(json.dumps(data_json, indent=4))
     
+    print("\n### Get raw JSON data from : " + args.item_id + " ....\n")
     param = {'fields':1}
     data_json = getTest('/item/' + args.item_id, param)
     print(json.dumps(data_json, indent=4))
    
+    print("\n### Get Item field Description from : " + args.item_id + " ....\n")
     desc = getItemField(args.item_id, "Description")
     print("Description field = " + desc)
 

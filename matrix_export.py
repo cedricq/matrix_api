@@ -136,10 +136,10 @@ def main():
     args = parser.parse_args()
     
     folder_name = api.getFolderName(args.folder_id)
-    print(args.folder_id)
+    print("\n### Exporting from folder: " + args.folder_id + " " + folder_name + " ....\n")
     rows_srs = api.getWorkItemsFromFolder(args.folder_id)
-    export.generate_interactive_html_table(rows_srs, out_path="output.html", title="Interactive Table")
-    filename = args.folder_id + "_" + folder_name + ".csv"
+    export.generate_interactive_html_table(rows_srs, out_path=args.output_filename, title="Interactive Table")
+    filename = args.output_filename + ".csv"
     export_csv(rows_srs, filename)
 
 
