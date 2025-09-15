@@ -2,6 +2,7 @@ import requests
 from requests.structures import CaseInsensitiveDict
 import json
 import re
+import argparse
 
 # Configuration - create config.json (see readme)
 with open("config.json", "r", encoding="utf-8") as f:
@@ -146,37 +147,24 @@ def getTest(scheme, param):
 
 def main():
     
-    #raw = getWorkItems('SRS')
-    #printRaw(raw, ['ID', 'Title', 'Description', 'Labels'])
-    
-    raw = getWorkItemsFromFolder("F-SRS-1")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--folder_id", required=True, type=str, default='F-SRS-2', help="Folder ID from which items will be exported")
+    parser.add_argument("-i", "--item_id", required=True, type=str, default='SRS-1', help="Folder ID from which items will be exported")
+    args = parser.parse_args()
+
+    raw = getWorkItemsFromFolder(args.folder_id)
     printRaw(raw)
 
-    #PREQ-1475  System mode
     param = {'children':'yes', 'fields':1}
-    data_json = getTest('/item/F-SRS-2', param)
+    data_json = getTest('/item/' + args.folder_id, param)
     print(json.dumps(data_json, indent=4))
-
-    folder_name = getFolderName('F-SRS-2')
-    print(folder_name)
     
-    #PREQ-282
-    # 21734 Description
-    
-    #param = {'children':'yes', 'fields':1}
-    #data_json = getTest('/cat/PREQ', param)
-    #print(json.dumps(data_json, indent=4))
-    
-    #param = {'fields':1}
-    #data_json = getTest('/item/PREQ-282', param)
-    #print(json.dumps(data_json, indent=4))
+    param = {'fields':1}
+    data_json = getTest('/item/' + args.item_id, param)
+    print(json.dumps(data_json, indent=4))
    
-    #desc = getItemField("SRS-1", "Description")
-    #print(desc)
-    #print(json.dumps(data_json, indent=4))
-
-
-
+    desc = getItemField(args.item_id, "Description")
+    print("Description field = " + desc)
 
 
 if __name__ == '__main__':

@@ -130,13 +130,16 @@ def export_csv(data, csv_file):
 
 def main():   
 
-    #folder_id = 'F-SRS-2'
-    folder_id = 'F-PREQ-16'
-    folder_name = api.getFolderName(folder_id)
-    print(folder_name)
-    rows_srs = api.getWorkItemsFromFolder(folder_id)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-o", "--output_filename", required=False, type=str, default="output.html", help="HTML format, default is \'output.html\'")
+    parser.add_argument("-f", "--folder_id", required=True, type=str, default='F-PREQ-16', help="Folder ID from which items will be exported")
+    args = parser.parse_args()
+    
+    folder_name = api.getFolderName(args.folder_id)
+    print(args.folder_id)
+    rows_srs = api.getWorkItemsFromFolder(args.folder_id)
     export.generate_interactive_html_table(rows_srs, out_path="output.html", title="Interactive Table")
-    filename = folder_id + "_" + folder_name + ".csv"
+    filename = args.folder_id + "_" + folder_name + ".csv"
     export_csv(rows_srs, filename)
 
 

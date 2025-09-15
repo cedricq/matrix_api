@@ -11,3 +11,37 @@ Create a 'config.json' file at root level of the python script. It shall contain
     "project": "matrix_project_name"
 }
 ```
+
+### Example of usage:
+
+```
+matrix_api git:(main) ✗ python matrix_api.py --help
+usage: matrix_api.py [-h] -f FOLDER_ID -i ITEM_ID
+
+options:
+  -h, --help            show this help message and exit
+  -f FOLDER_ID, --folder_id FOLDER_ID
+                        Folder ID from which items will be exported
+  -i ITEM_ID, --item_id ITEM_ID
+                        Folder ID from which items will be exported
+```
+
+```
+python matrix_api.py -f F-SRS-2 -i SRS-1
+```
+
+```
+matrix_api git:(main) ✗ python matrix_export.py --help
+usage: matrix_export.py [-h] [-o OUTPUT_FILENAME] -f FOLDER_ID
+
+options:
+  -h, --help            show this help message and exit
+  -o OUTPUT_FILENAME, --output_filename OUTPUT_FILENAME
+                        HTML format, default is 'output.html'
+  -f FOLDER_ID, --folder_id FOLDER_ID
+                        Folder ID from which items will be exported
+```
+
+```
+python matrix_export.py -o export.html -f F-PREQ-16 
+```
