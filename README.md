@@ -43,5 +43,8 @@ options:
 ```
 
 ```
-python matrix_export.py -o export.html -f F-PREQ-16 
+python matrix_export.py -o export -f F-PREQ-16 
+python matrix_export.py -o export -f F-FMEA-2
 ```
+
+It does export the data table files called `export.html` / `export.xlsx`
