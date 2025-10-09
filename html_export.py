@@ -52,8 +52,18 @@ def generate_interactive_html_table(data, out_path="interactive_table.html", tit
   }}
   html, body {{ margin:0; padding:0; background:var(--bg); color:var(--text);
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }}
-  .wrapper {{ max-width: 1100px; margin: 32px auto; padding: 0 16px; }}
-  .card {{ background: var(--card); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35); overflow:hidden; }}
+  .wrapper {{
+    width: 100vw;      /* take full viewport width */
+    margin: 0;         /* no left/right margin */
+    padding: 0;        /* no inner padding */
+  }}
+  .card {{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0;  /* no rounded corners */
+    box-shadow: none;  /* optional: remove shadow for full-bleed look */
+    overflow: hidden;
+  }}
   .header {{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;
     padding:16px; border-bottom:1px solid var(--border); }}
   .title {{ font-weight:700; font-size:18px; letter-spacing:.2px; }}
@@ -174,6 +184,7 @@ def generate_interactive_html_table(data, out_path="interactive_table.html", tit
         tbody.appendChild(tr);
         visible++;
       }}
+    applyColorFormatting();
     }}
     rowCountEl.textContent = visible + ' / ' + rows.length + ' rows';
   }}
@@ -197,7 +208,25 @@ def generate_interactive_html_table(data, out_path="interactive_table.html", tit
     render();
   }});
 
+  // Apply background colors to numeric cells
+  function applyColorFormatting() {{
+    const tds = table.querySelectorAll('tbody td');
+    for (const td of tds) {{
+      const text = td.textContent.trim();
+      const val = Number(text);
+      if (!isNaN(val) && Number.isFinite(val)) {{
+        if (val >= 4) {{
+          td.style.background = 'rgba(255, 80, 80, 0.25)';   // red
+        }} else if (val >= 3) {{
+          td.style.background = 'rgba(255, 165, 0, 0.25)';   // orange
+        }} else {{
+          td.style.background = 'rgba(0, 200, 0, 0.25)';     // green
+        }}
+      }}
+    }}
+  }}
   render();
+
 }})();
 </script>
 </body>

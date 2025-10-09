@@ -4,7 +4,7 @@ import html_export as export
 
 import os
 from lxml import etree
-import csv
+import pandas as pd
 import argparse
 import re
 
@@ -109,38 +109,28 @@ def table_as_html(table_in, table_title):
 
     return output
 
-def export_csv(data, csv_file):
-    columns = list(data[0].keys())
-    line = ""
-    lines = []
-    for c in columns:
-        line += c + ';'
-    lines.append(line + '\n')
-    for row in data:
-        line = ""
-        for c in columns:
-            text = row[c].replace('\n', " ")
-            line += text + ';'
-        lines.append(line + '\n')
-            
-    with open(csv_file, "w", newline="", encoding="utf-8") as f:
-        for l in lines:
-            f.write(l)
+def export_xls(data, xls_file):
+    df = pd.DataFrame(data)
+    df.to_excel(xls_file, index=False)
 
 
 def main():   
 
+    # F-FMEA-2 Implant Software
+    # F-PREQ-16 Implant Software
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output_filename", required=False, type=str, default="output.html", help="HTML format, default is \'output.html\'")
+    parser.add_argument("-o", "--output_filename", required=False, type=str, default="output", help="HTML format, default is \'output.html\'")
     parser.add_argument("-f", "--folder_id", required=True, type=str, default='F-PREQ-16', help="Folder ID from which items will be exported")
+    parser.add_argument("-t", "--title", required=True, type=str, default='', help="Table tile")
     args = parser.parse_args()
     
     folder_name = api.getFolderName(args.folder_id)
     print("\n### Exporting from folder: " + args.folder_id + " " + folder_name + " ....\n")
-    rows_srs = api.getWorkItemsFromFolder(args.folder_id)
-    export.generate_interactive_html_table(rows_srs, out_path=args.output_filename, title="Interactive Table")
-    filename = args.output_filename + ".csv"
-    export_csv(rows_srs, filename)
+    rows = api.getMatrixItemsFromFolder(args.folder_id)
+    export.generate_interactive_html_table(rows, out_path=args.output_filename + '.html', title=args.title)
+    filename = args.output_filename + ".xlsx"
+    export_xls(rows, filename)
 
 
 if __name__ == '__main__':

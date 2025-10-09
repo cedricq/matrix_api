@@ -34,6 +34,24 @@ def getFieldIdJson(data_json, field):
             return elt["id"]
     return None
 
+def extractDataFromFMEA(json_in):
+    output = {}
+    for element in json_in['factors']:
+        if element['type'] == "item":
+            output['item'] = element['value']
+        elif element['type'] == "failure":
+            output['failure'] = element['value']
+            output['P1'] = element['weights'][0]['value']
+        elif element['type'] == "effect":
+            output['effect'] = element['value']
+        elif element['type'] == "cause":
+            output['cause'] = element['value']
+        elif element['type'] == "Harm":
+            output['harm'] = element['value']
+            output['S1'] = element['weights'][0]['value']
+    return output
+        
+
 
 def exportItemFromJson(json_in, full=True):
     export = []
@@ -48,8 +66,20 @@ def exportItemFromJson(json_in, full=True):
             item['Title'] = line['title']
             print(item['ID'] + "  \t" + item['Title'])
             if full:
-                item['Description'] = getItemField(item['ID'], "Description")
-                item['Labels'] = getItemField(item['ID'], "Labels")
+                if 'FMEA' in item['ID']:
+                    fmea_field = getItemField(item['ID'], "FMEA")
+                    fmea_json = json.loads(fmea_field)
+                    fmea = extractDataFromFMEA(fmea_json)
+                    item['item'] = fmea['item']
+                    item['failure'] = fmea['failure']
+                    item['effect'] = fmea['effect']
+                    item['cause'] = fmea['cause']
+                    item['P1'] = fmea['P1']
+                    item['S1'] = fmea['S1']
+                    item['Mitigation'] = getItemField(item['ID'], "Risk Mitigation Comment")
+                else:
+                    item['Description'] = getItemField(item['ID'], "Description")
+                    item['Labels'] = getItemField(item['ID'], "Labels")
             export.append(item)
     return export
 
@@ -122,10 +152,6 @@ def getWorkItems(item_type):
     raw = getMatrixItems(item_type, True)
     return raw
 
-def getWorkItemsFromFolder(folder_id):
-    raw = getMatrixItemsFromFolder(folder_id)
-    return raw
-
 def getTest(scheme, param):
 
     url = f"{BASE_URL}/{PROJECT}{scheme}"
@@ -155,7 +181,7 @@ def main():
     folder_name = getFolderName(args.folder_id)
     
     print("\n### Get Work Item from folder : " + args.folder_id + " " + folder_name + " ....\n")
-    raw = getWorkItemsFromFolder(args.folder_id)
+    raw = getMatrixItemsFromFolder(args.folder_id)
     printRaw(raw)
 
     print("\n### Get raw JSON data from : " + args.folder_id + " ....\n")
@@ -169,7 +195,7 @@ def main():
     print(json.dumps(data_json, indent=4))
    
     print("\n### Get Item field Description from : " + args.item_id + " ....\n")
-    desc = getItemField(args.item_id, "Description")
+    desc = getItemField(args.item_id, "FMEA")
     print("Description field = " + desc)
 
 
